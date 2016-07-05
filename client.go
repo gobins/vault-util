@@ -5,13 +5,21 @@ import (
 	"github.com/hashicorp/vault/api"
 )
 
-func getClient(vaultAddress string) *api.Client {
-	c := api.Config{Address: vaultAddress}
-	// response := c.ReadEnvironment()
-	// if response != nil {
-	// 	log.Error("Error reading local env: ", response.Error())
-	// }
-	client, err := api.NewClient(&c)
+type vaultClientInput struct {
+	Address    string
+	Token      string
+	SSLEnabled bool
+	SSLVerify  bool
+	SSLCert    string
+	SSLKey     string
+	SSLCACert  string
+}
+
+func getClient(input *vaultClientInput) *api.Client {
+	config := api.DefaultConfig()
+	config.Address = input.Address
+
+	client, err := api.NewClient(config)
 	if err != nil {
 		log.Error("Error creating Vault Client: ", err.Error())
 	}
