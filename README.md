@@ -1,14 +1,34 @@
-# vault-util
+# vaultutil
 A utility tool which uses the Haschicorp Vault API.
-This tool can be used to generate and retrieve App-ID and User-ID using a out of bound flow.
+This tool can be used to authenticate using Vault's HTTP api.
 
 ## Support
-vault-util has been tested with the following versions
+vaultutil has been tested with the following versions
 * 0.6
 
+## Usage
+go get github.com/gobins/vaultutil
+
+### Creating a client
+client, err := GetVaultClient("userpass")
+
+### LDAP Authentication
+* VAULT_LUSER
+* VAULT_LPASSWORD
+
+### Userpass Authentication
+* VAULT_USER
+* VAULT_PASSWORD
+
+client.Authenticate()
+
+### Retrieving Auth Token
+token = client.GetToken()
+
+
 ## Features
-* Generate unique App-ID and User-ID mappings
-* Store and Retrieve tokens from cubbyhole
+* Authenticate using ldap backend
+* Authenticate using userpass backend
 
 ## Contributing
 Please contribute by sending a pull request.

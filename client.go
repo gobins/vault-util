@@ -1,84 +1,70 @@
-package main
+package vaultutil
 
 import (
 	"crypto/tls"
-	"crypto/x509"
-	"io/ioutil"
-
-	log "github.com/Sirupsen/logrus"
-	"github.com/hashicorp/go-cleanhttp"
-	"github.com/hashicorp/vault/api"
+	"net/http"
+	"strings"
 )
 
-type vaultClientInput struct {
-	Address    string
-	Token      string
-	SSLEnabled bool
-	SSLVerify  bool
-	SSLCert    string
-	SSLKey     string
-	SSLCACert  string
+func (c *vaultClient) Get() (*http.Response, error) {
+
+	tr := &http.Transport{}
+	url := c.base_url + c.uri
+	if c.sslEnable && !c.sslVerify {
+		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	}
+
+	vclient := &http.Client{Transport: tr}
+	req, err := http.NewRequest("GET", url, nil)
+
+	if c.token != "" {
+
+		req.Header.Set("X-Vault-Token", c.token)
+	}
+	resp, err := vclient.Do(req)
+	return resp, err
 }
 
-func getClient(input *vaultClientInput) *api.Client {
-	config := api.DefaultConfig()
+func (c *vaultClient) Post() (*http.Response, error) {
+	tr := &http.Transport{}
 
-	if input.Address != "" {
-		log.Info("Setting Vault Address to: ", input.Address)
-		config.Address = input.Address
+	if c.sslEnable && !c.sslVerify {
+		tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 
-	transport := cleanhttp.DefaultTransport()
+	vclient := &http.Client{Transport: tr}
+	url := c.base_url + c.uri
+	req, _ := http.NewRequest("POST", url, strings.NewReader(c.data))
+	if c.token != "" {
 
-	if input.SSLEnabled {
-		log.Info("Enabling SSL for Vault Client")
-		var tlsConfig tls.Config
-
-		if input.SSLCert != "" && input.SSLKey != "" {
-			cert, err := tls.LoadX509KeyPair(input.SSLCert, input.SSLKey)
-			if err != nil {
-				log.Error("Error setting SSL Cert and Key")
-			}
-			tlsConfig.Certificates = []tls.Certificate{cert}
-		} else if input.SSLCert != "" {
-			cert, err := tls.LoadX509KeyPair(input.SSLCert, input.SSLCert)
-			if err != nil {
-				log.Error("Error setting SSL Cert")
-			}
-			tlsConfig.Certificates = []tls.Certificate{cert}
-		}
-
-		if input.SSLCACert != "" {
-			cacert, err := ioutil.ReadFile(input.SSLCACert)
-			if err != nil {
-				log.Error("Error setting SSL Cert CA")
-			}
-			caCertPool := x509.NewCertPool()
-			caCertPool.AppendCertsFromPEM(cacert)
-			tlsConfig.RootCAs = caCertPool
-		}
-
-		tlsConfig.BuildNameToCertificate()
-
-		if !input.SSLVerify {
-			log.Debug("Turning off SSL verification")
-			tlsConfig.InsecureSkipVerify = true
-		}
-
-		transport.TLSClientConfig = &tlsConfig
+		req.Header.Set("X-Vault-Token", c.token)
 	}
 
-	config.HttpClient.Transport = transport
+	resp, err := vclient.Do(req)
 
-	client, err := api.NewClient(config)
-	if err != nil {
-		log.Error("Error creating Vault Client: ", err.Error())
+	return resp, err
+
+}
+
+func (c *vaultClient) Authenticate() (*authResponse, error) {
+
+	if c.credtype == "userpass" {
+		c.uri = "/v1/auth/userpass/login/" + c.username
+		c.data = `{"password" : "` + c.password + `"}`
+	}
+	if c.credtype == "ldap" {
+		c.uri = "/v1/auth/ldap/login/" + c.username
+		c.data = `{"password" : "` + c.password + `"}`
 	}
 
-	if input.Token != "" {
-		log.Info("Setting Client token")
-		client.SetToken(input.Token)
-	}
+	resp, err := c.Post()
+	jsonResponse := &authResponse{}
 
-	return client
+	if resp.StatusCode != 200 {
+		return jsonResponse, &authError{readerToString(resp.Body)}
+	}
+	jsonResponse, err = parseAuthResponse(resp)
+	c.token = jsonResponse.Client_Token
+	return jsonResponse, err
+
 }
