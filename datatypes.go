@@ -12,6 +12,20 @@ type authResponse struct {
 	AuthHolder `json:"auth"`
 }
 
+type SSHRoleData struct {
+	Key               string
+	Admin_User        string
+	Default_User      string
+	Cidr_List         string
+	Exclude_Cidr_List string
+	Port              int
+	key_type          string
+	key_bits          int
+	install_script    string
+	allowed_users     string
+	key_option_specs  string
+}
+
 type AuthHolder struct {
 	Client_Token   string   `json:"client_token"`
 	Accessor       string   `json:"accessor"`
