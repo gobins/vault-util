@@ -23,8 +23,11 @@ The following environment variables needs to be set for authentication
 
 ### Creating a client
 client, err := GetVaultClient("userpass")
+
 or
+
 client, err := GetVaultClient("ldap")
+
 client.Authenticate()
 
 ### Retrieving Auth Token
@@ -38,4 +41,5 @@ vaultutil has been tested with the following versions
 
 ## Contributing
 Please contribute by sending a pull request.
+
 If there is an issue due to API changes, please raise an issue.
