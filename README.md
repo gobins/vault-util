@@ -2,16 +2,16 @@
 A utility tool which uses the Haschicorp Vault API.
 This tool can be used to authenticate using Vault's HTTP api.
 
-## Support
-vaultutil has been tested with the following versions
-* 0.6
+## Features
+* Authenticate using ldap backend
+* Authenticate using userpass backend
+* HTTP Api call support for custom paths
+
 
 ## Usage
 go get github.com/gobins/vaultutil
 
-### Creating a client
-client, err := GetVaultClient("userpass")
-
+The following environment variables needs to be set for authentication
 ### LDAP Authentication
 * VAULT_LUSER
 * VAULT_LPASSWORD
@@ -20,15 +20,21 @@ client, err := GetVaultClient("userpass")
 * VAULT_USER
 * VAULT_PASSWORD
 
+
+### Creating a client
+client, err := GetVaultClient("userpass")
+or
+client, err := GetVaultClient("ldap")
 client.Authenticate()
 
 ### Retrieving Auth Token
 token = client.GetToken()
 
+## Support
+vaultutil has been tested with the following versions
+* 0.6
+* 0.6.1
 
-## Features
-* Authenticate using ldap backend
-* Authenticate using userpass backend
 
 ## Contributing
 Please contribute by sending a pull request.
