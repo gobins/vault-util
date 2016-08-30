@@ -63,10 +63,10 @@ func DeletePolicy(c *vaultapi.Client, policy_name string) error {
 	return nil
 }
 
-func ReadPolicy(c *vaultapi.Client, policy_name string) error {
-	_, err := c.Sys().GetPolicy(policy_name)
+func ReadPolicy(c *vaultapi.Client, policy_name string) (string, error) {
+	policy, err := c.Sys().GetPolicy(policy_name)
 	if err != nil {
-		return err
+		return policy, err
 	}
-	return nil
+	return policy, nil
 }
