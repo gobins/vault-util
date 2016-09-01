@@ -32,10 +32,10 @@ func DeleteMount(c *vaultapi.Client, mount_path string) error {
 	return nil
 }
 
-func ListMounts(c *vaultapi.Client) error {
-	_, err := c.Logical().Read("sys/mounts")
+func ListMounts(c *vaultapi.Client) (map[string]*api.MountOutput, error) {
+	data, err := c.Sys().ListMounts()
 	if err != nil {
-		return err
+		return data, err
 	}
-	return nil
+	return data, err
 }
