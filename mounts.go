@@ -32,7 +32,7 @@ func DeleteMount(c *vaultapi.Client, mount_path string) error {
 	return nil
 }
 
-func ListMounts(c *vaultapi.Client) (map[string]*api.MountOutput, error) {
+func ListMounts(c *vaultapi.Client) (map[string]*vaultapi.MountOutput, error) {
 	data, err := c.Sys().ListMounts()
 	if err != nil {
 		return data, err
