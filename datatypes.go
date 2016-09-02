@@ -67,3 +67,12 @@ type authError struct {
 func (e *authError) Error() string {
 	return e.s
 }
+
+type MountData struct {
+	mount_name        string
+	mount_type        string
+	backend_type      string
+	path              string
+	default_lease_ttl int
+	max_lease_ttl     int
+}
