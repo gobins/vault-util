@@ -9,9 +9,9 @@ func CreateMount(c *vaultapi.Client, mount_data MountData) error {
 	data := map[string]interface{}{
 		"type":        mount_data.mount_type,
 		"description": mount_data.description,
-		"config": {
-			"default_lease_ttl": mount_data.default_lease_ttl,
-			"max_lease_ttl":     mount_data.max_lease_ttl,
+		"config": map[string]interface{}{
+			"default_lease_ttl": mount_data.mount_name,
+			"max_lease_ttl":     mount_data.mount_type,
 		},
 	}
 
