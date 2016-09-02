@@ -74,6 +74,6 @@ type MountData struct {
 	Backend_type      string
 	Description       string
 	Path              string
-	Default_lease_ttl int
-	Max_lease_ttl     int
+	Default_lease_ttl string
+	Max_lease_ttl     string
 }

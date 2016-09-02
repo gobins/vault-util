@@ -1,17 +1,18 @@
 package vaultutil
 
 import (
+	"encoding/json"
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
 func CreateMount(c *vaultapi.Client, mount_data MountData) error {
 
 	data := map[string]interface{}{
-		"type":        mount_data.Mount_type,
 		"description": mount_data.Description,
+		"type":        mount_data.Mount_type,
 		"config": map[string]interface{}{
-			"default_lease_ttl": mount_data.Default_lease_ttl,
-			"max_lease_ttl":     mount_data.Max_lease_ttl,
+			"default_lease_ttl": json.Number(mount_data.Default_lease_ttl),
+			"max_lease_ttl":     json.Number(mount_data.Max_lease_ttl),
 		},
 	}
 
