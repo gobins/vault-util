@@ -4,10 +4,18 @@ import (
 	vaultapi "github.com/hashicorp/vault/api"
 )
 
-func CreateMount(c *vaultapi.Client, mount_path, mount_type string) error {
-	data := map[string]interface{}{"type": mount_type}
+func CreateMount(c *vaultapi.Client, mount_data MountData) error {
 
-	_, err := c.Logical().Write("sys/mounts/"+mount_path, data)
+	data := map[string]interface{}{
+		"type":        mount_data.mount_type,
+		"description": mount_data.description,
+		"config": {
+			"default_lease_ttl": mount_data.default_lease_ttl,
+			"max_lease_ttl":     mount_data.max_lease_ttl,
+		},
+	}
+
+	_, err := c.Logical().Write("sys/mounts/"+mount_data.path, data)
 	if err != nil {
 		return err
 	}
@@ -15,7 +23,9 @@ func CreateMount(c *vaultapi.Client, mount_path, mount_type string) error {
 }
 
 func DoRemount(c *vaultapi.Client, mount_path, new_mount_path string) error {
-	data := map[string]interface{}{"from": mount_path, "to": new_mount_path}
+	data := map[string]interface{}{
+		"from": mount_path,
+		"to":   new_mount_path}
 
 	_, err := c.Logical().Write("sys/remount", data)
 	if err != nil {

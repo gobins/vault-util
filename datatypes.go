@@ -72,6 +72,7 @@ type MountData struct {
 	mount_name        string
 	mount_type        string
 	backend_type      string
+	description       string
 	path              string
 	default_lease_ttl int
 	max_lease_ttl     int
