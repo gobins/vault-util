@@ -7,15 +7,15 @@ import (
 func CreateMount(c *vaultapi.Client, mount_data MountData) error {
 
 	data := map[string]interface{}{
-		"type":        mount_data.mount_type,
-		"description": mount_data.description,
+		"type":        mount_data.Mount_type,
+		"description": mount_data.Description,
 		"config": map[string]interface{}{
-			"default_lease_ttl": mount_data.mount_name,
-			"max_lease_ttl":     mount_data.mount_type,
+			"default_lease_ttl": mount_data.Default_lease_ttl,
+			"max_lease_ttl":     mount_data.Max_lease_ttl,
 		},
 	}
 
-	_, err := c.Logical().Write("sys/mounts/"+mount_data.path, data)
+	_, err := c.Logical().Write("sys/mounts/"+mount_data.Path, data)
 	if err != nil {
 		return err
 	}
