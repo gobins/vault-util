@@ -12,6 +12,14 @@ func GetGroups(c *vaultapi.Client) (*vaultapi.Secret, error) {
 	return resp, err
 }
 
+func DeleteGroups(c *vaultapi.Client, groupname string) (*vaultapi.Secret, error) {
+	resp, err := c.Logical().Delete("auth/ldap/groups" + groupname)
+	if err != nil {
+		return resp, err
+	}
+	return resp, err
+}
+
 func GetGroupPolicy(c *vaultapi.Client, group_name string) (*vaultapi.Secret, error) {
 	resp, err := c.Logical().Read("auth/ldap/groups/" + group_name)
 	if err != nil {
