@@ -12,8 +12,8 @@ func GetGroups(c *vaultapi.Client) (*vaultapi.Secret, error) {
 	return resp, err
 }
 
-func DeleteGroups(c *vaultapi.Client, groupname string) (*vaultapi.Secret, error) {
-	resp, err := c.Logical().Delete("auth/ldap/groups" + groupname)
+func DeleteGroup(c *vaultapi.Client, groupname string) (*vaultapi.Secret, error) {
+	resp, err := c.Logical().Delete("auth/ldap/groups/" + groupname)
 	if err != nil {
 		return resp, err
 	}
